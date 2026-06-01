@@ -496,6 +496,125 @@ select:focus {
   margin-top: 0;
 }
 
+/* ---------- Stats: big-stat row & form ---------- */
+.big-stat-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+.form-badges {
+  display: inline-flex;
+  gap: 4px;
+}
+.form-badge {
+  width: 20px;
+  height: 20px;
+  border-radius: 5px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+}
+.form-badge.w {
+  background: var(--success);
+}
+.form-badge.d {
+  background: var(--out);
+}
+.form-badge.l {
+  background: var(--danger);
+}
+.streak-tag {
+  font-weight: 700;
+}
+
+/* ---------- Knockout bracket ---------- */
+.champion-banner {
+  background: rgba(0, 224, 198, 0.12);
+  border: 1px solid rgba(0, 224, 198, 0.3);
+  color: var(--accent);
+  padding: 8px 16px;
+  border-radius: 9px;
+  font-weight: 600;
+}
+.bracket {
+  display: flex;
+  gap: 18px;
+  overflow-x: auto;
+  padding-bottom: 16px;
+  align-items: stretch;
+}
+.bracket-round {
+  flex: 0 0 220px;
+  display: flex;
+  flex-direction: column;
+}
+.bracket-round-title {
+  text-align: center;
+  color: var(--accent);
+  font-size: 0.95rem;
+  margin: 0 0 12px;
+}
+.bracket-matches {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  gap: 14px;
+  flex: 1;
+}
+.bracket-match {
+  padding: 0;
+  margin-bottom: 0;
+  overflow: hidden;
+}
+.bracket-side {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+}
+.bracket-side + .bracket-side {
+  border-top: 1px solid var(--border);
+}
+.bracket-seed {
+  width: 20px;
+  text-align: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+.bracket-team {
+  flex: 1;
+  font-weight: 600;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.bracket-score {
+  font-weight: 700;
+  min-width: 16px;
+  text-align: right;
+}
+.bracket-side.winner {
+  background: rgba(40, 192, 138, 0.12);
+}
+.bracket-side.winner .bracket-team {
+  color: var(--success);
+}
+.bracket-side.tbd .bracket-team {
+  color: var(--muted);
+  font-style: italic;
+  font-weight: 500;
+}
+.round-heading {
+  font-size: 1.1rem;
+  margin: 22px 0 10px;
+  color: var(--accent);
+}
+
 @media (max-width: 720px) {
   .inline-form,
   .two-col {

@@ -42,6 +42,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/fixtures/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/standings/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/stats/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/knockout/**").permitAll()
                         // Everything else (admin writes) requires authentication; @PreAuthorize enforces ADMIN
                         .anyRequest().authenticated()
                 )

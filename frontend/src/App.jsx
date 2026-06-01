@@ -7,8 +7,10 @@ import FixturesPage from './pages/FixturesPage.jsx';
 import StandingsPage from './pages/StandingsPage.jsx';
 import StatsPage from './pages/StatsPage.jsx';
 import TeamsPage from './pages/TeamsPage.jsx';
+import KnockoutPage from './pages/KnockoutPage.jsx';
 import AdminTeamsPage from './pages/admin/AdminTeamsPage.jsx';
 import AdminFixturesPage from './pages/admin/AdminFixturesPage.jsx';
+import AdminKnockoutPage from './pages/admin/AdminKnockoutPage.jsx';
 
 export default function App() {
   return (
@@ -25,6 +27,7 @@ export default function App() {
           <Route path="/standings" element={<StandingsPage />} />
           <Route path="/stats" element={<StatsPage />} />
           <Route path="/teams" element={<TeamsPage />} />
+          <Route path="/knockout" element={<KnockoutPage />} />
 
           {/* Admin only */}
           <Route
@@ -40,6 +43,14 @@ export default function App() {
             element={
               <ProtectedRoute adminOnly>
                 <AdminFixturesPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/knockout"
+            element={
+              <ProtectedRoute adminOnly>
+                <AdminKnockoutPage />
               </ProtectedRoute>
             }
           />

@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Champions League Manager — Landing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #05060d;
+    --bg-2: #0a0b1a;
+    --blue: #3b82f6;
+    --blue-bright: #38bdf8;
+    --purple: #8b5cf6;
+    --text: #e9ecf5;
+    --muted: #8b92ad;
+    --glass: rgba(255, 255, 255, 0.045);
+    --glass-border: rgba(255, 255, 255, 0.09);
+    --radius: 20px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow-x: hidden;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, .title { font-family: 'Space Grotesk', sans-serif; letter-spacing: -0.02em; }
+
+  /* ---------- Ambient background ---------- */
+  .bg-layer { position: fixed; inset: 0; z-index: -2; overflow: hidden; }
+  .glow {
+    position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.5;
+  }
+  .glow.blue { width: 600px; height: 600px; background: #1d4ed8; top: -180px; left: -120px; }
+  .glow.purple { width: 560px; height: 560px; background: #7c3aed; top: 120px; right: -160px; opacity: 0.45; }
+  .glow.cyan { width: 480px; height: 480px; background: #0ea5e9; bottom: -200px; left: 35%; opacity: 0.3; }
+
+  /* faint stadium + bracket lines */
+  .stadium {
+    position: fixed; left: 50%; top: 64px; transform: translateX(-50%);
+    width: 1100px; max-width: 95vw; z-index: -1; opacity: 0.5; pointer-events: none;
+  }
+  .grid-overlay {
+    position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: 0.4;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+    background-size: 56px 56px;
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 10%, #000 30%, transparent 75%);
+  }
+
+  /* ---------- Layout ---------- */
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 28px; }
+
+  /* ---------- Nav ---------- */
+  nav {
+    position: sticky; top: 0; z-index: 50;
+    backdrop-filter: blur(14px);
+    background: rgba(6, 7, 16, 0.55);
+    border-bottom: 1px solid var(--glass-border);
+  }
+  .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 68px; }
+  .brand { display: flex; align-items: center; gap: 11px; font-family: 'Space Grotesk'; font-weight: 700; font-size: 18px; }
+  .brand .logo {
+    width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center;
+    background: linear-gradient(135deg, var(--blue), var(--purple));
+    box-shadow: 0 0 22px rgba(99, 102, 241, 0.55);
+  }
+  .nav-links { display: flex; gap: 30px; font-size: 14px; color: var(--muted); }
+  .nav-links a { color: var(--muted); text-decoration: none; transition: color .2s; }
+  .nav-links a:hover { color: var(--text); }
+  .nav-cta {
+    font-size: 14px; padding: 9px 18px; border-radius: 11px; color: #fff;
+    background: linear-gradient(135deg, var(--blue), var(--purple));
+    text-decoration: none; font-weight: 600; box-shadow: 0 8px 24px rgba(99,102,241,.35);
+  }
+
+  /* ---------- Hero ---------- */
+  .hero { text-align: center; padding: 92px 0 70px; }
+  .pill {
+    display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: #cdd3ea;
+    padding: 7px 15px; border-radius: 999px; margin-bottom: 28px;
+    background: var(--glass); border: 1px solid var(--glass-border); backdrop-filter: blur(8px);
+  }
+  .pill .dot { width: 7px; height: 7px; border-radius: 50%; background: #34d399; box-shadow: 0 0 10px #34d399; }
+  .hero h1 {
+    font-size: clamp(40px, 6.6vw, 78px); font-weight: 700; line-height: 1.02;
+    background: linear-gradient(180deg, #ffffff 30%, #aab2d6 100%);
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .hero h1 .accent {
+    background: linear-gradient(120deg, var(--blue-bright), var(--purple));
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .hero p.sub { font-size: clamp(16px, 2vw, 20px); color: var(--muted); margin: 22px auto 0; max-width: 560px; }
+  .hero-btns { display: flex; gap: 16px; justify-content: center; margin-top: 38px; flex-wrap: wrap; }
+  .btn {
+    font-family: 'Space Grotesk'; font-weight: 600; font-size: 15px; padding: 14px 28px;
+    border-radius: 13px; border: none; cursor: pointer; text-decoration: none; display: inline-flex;
+    align-items: center; gap: 9px; transition: transform .18s ease, box-shadow .18s ease;
+  }
+  .btn-primary { color: #fff; background: linear-gradient(135deg, var(--blue), var(--purple)); box-shadow: 0 12px 34px rgba(99,102,241,.45); }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 16px 42px rgba(99,102,241,.6); }
+  .btn-ghost { color: var(--text); background: var(--glass); border: 1px solid var(--glass-border); backdrop-filter: blur(8px); }
+  .btn-ghost:hover { transform: translateY(-2px); border-color: rgba(255,255,255,.22); }
+
+  /* ---------- Stat cards ---------- */
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-top: 30px; }
+  .glass {
+    background: var(--glass); border: 1px solid var(--glass-border); border-radius: var(--radius);
+    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    box-shadow: 0 18px 50px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.05);
+  }
+  .stat { padding: 22px 22px; position: relative; overflow: hidden; }
+  .stat .label { font-size: 12.5px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+  .stat .value { font-family: 'Space Grotesk'; font-weight: 700; font-size: 26px; margin-top: 10px; }
+  .stat .value small { font-size: 13px; color: var(--muted); font-weight: 500; }
+  .stat .ico {
+    position: absolute; top: 18px; right: 18px; width: 34px; height: 34px; border-radius: 10px;
+    display: grid; place-items: center; background: rgba(99,102,241,.16); color: var(--blue-bright);
+  }
+  .stat .badge { display: inline-block; margin-top: 8px; font-size: 11px; padding: 3px 9px; border-radius: 999px;
+    background: rgba(56,189,248,.14); color: var(--blue-bright); }
+
+  /* ---------- Section heading ---------- */
+  .section { padding: 76px 0; }
+  .eyebrow { text-align: center; color: var(--blue-bright); font-size: 13px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; }
+  .section h2 { text-align: center; font-size: clamp(28px, 4vw, 42px); font-weight: 700; margin-top: 12px; }
+  .section .lead { text-align: center; color: var(--muted); max-width: 520px; margin: 16px auto 0; }
+
+  /* ---------- Features ---------- */
+  .features { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-top: 50px; }
+  .feature { padding: 30px 24px; transition: transform .2s ease, border-color .2s ease; }
+  .feature:hover { transform: translateY(-4px); border-color: rgba(139,92,246,.4); }
+  .feature .fi {
+    width: 52px; height: 52px; border-radius: 14px; display: grid; place-items: center; margin-bottom: 18px;
+    background: linear-gradient(135deg, rgba(59,130,246,.22), rgba(139,92,246,.22));
+    border: 1px solid rgba(255,255,255,.08); color: var(--blue-bright);
+  }
+  .feature h3 { font-size: 17px; font-weight: 600; }
+  .feature p { font-size: 13.5px; color: var(--muted); margin-top: 8px; }
+
+  /* ---------- Interactive: prediction + bracket + table ---------- */
+  .interactive { display: grid; grid-template-columns: 1fr 1.15fr; gap: 22px; margin-top: 50px; align-items: start; }
+  .panel { padding: 26px; }
+  .panel-title { display: flex; align-items: center; gap: 10px; font-family: 'Space Grotesk'; font-weight: 600; font-size: 16px; margin-bottom: 20px; }
+  .panel-title .tag { margin-left: auto; font-size: 11px; color: var(--muted); font-weight: 500; }
+
+  .match { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 14px; }
+  .team-side { text-align: center; }
+  .team-logo {
+    width: 64px; height: 64px; border-radius: 18px; margin: 0 auto 12px; display: grid; place-items: center;
+    font-family: 'Space Grotesk'; font-weight: 700; font-size: 22px; color: #fff;
+    box-shadow: 0 10px 26px rgba(0,0,0,.4);
+  }
+  .logo-a { background: linear-gradient(135deg, #ef4444, #b91c1c); }
+  .logo-b { background: linear-gradient(135deg, #2563eb, #1e3a8a); }
+  .team-side .name { font-weight: 600; font-size: 14px; }
+  .team-side .seed { font-size: 12px; color: var(--muted); }
+  .score-input {
+    width: 60px; height: 64px; text-align: center; font-family: 'Space Grotesk'; font-weight: 700; font-size: 30px;
+    color: #fff; background: rgba(255,255,255,.05); border: 1px solid var(--glass-border); border-radius: 14px;
+    outline: none; transition: border-color .2s, box-shadow .2s;
+  }
+  .score-input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(59,130,246,.25); }
+  .vs { font-family: 'Space Grotesk'; font-weight: 700; color: var(--muted); font-size: 13px; }
+  .score-row { display: flex; align-items: center; justify-content: center; gap: 14px; margin: 22px 0; }
+  .btn-sim { width: 100%; justify-content: center; }
+  .prob-bar { height: 8px; border-radius: 999px; background: rgba(255,255,255,.07); overflow: hidden; margin-top: 18px; }
+  .prob-fill { height: 100%; width: 62%; background: linear-gradient(90deg, var(--blue), var(--purple)); border-radius: 999px; }
+  .prob-legend { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-top: 8px; }
+
+  /* bracket */
+  .bracket { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; align-items: center; }
+  .bcol { display: flex; flex-direction: column; gap: 14px; justify-content: center; }
+  .bmatch {
+    background: rgba(255,255,255,.04); border: 1px solid var(--glass-border); border-radius: 12px; padding: 10px 12px;
+    font-size: 12.5px;
+  }
+  .bteam { display: flex; justify-content: space-between; padding: 3px 0; color: var(--muted); }
+  .bteam.win { color: var(--text); font-weight: 600; }
+  .bteam .s { color: var(--blue-bright); font-weight: 700; }
+  .bmatch.final {
+    border-color: rgba(139,92,246,.5);
+    box-shadow: 0 0 24px rgba(139,92,246,.35);
+    animation: glowPulse 2.6s ease-in-out infinite;
+  }
+  @keyframes glowPulse {
+    0%,100% { box-shadow: 0 0 18px rgba(139,92,246,.25); }
+    50% { box-shadow: 0 0 34px rgba(139,92,246,.6); }
+  }
+
+  /* league table */
+  .table { width: 100%; border-collapse: collapse; font-size: 13.5px; margin-top: 4px; }
+  .table th { text-align: left; color: var(--muted); font-weight: 500; font-size: 12px; padding: 8px 10px; text-transform: uppercase; letter-spacing: .05em; }
+  .table td { padding: 11px 10px; border-top: 1px solid rgba(255,255,255,.05); }
+  .table tr td:first-child { color: var(--muted); width: 28px; }
+  .table .tname { display: flex; align-items: center; gap: 10px; font-weight: 600; }
+  .table .chip { width: 22px; height: 22px; border-radius: 7px; display: grid; place-items: center; font-size: 10px; font-weight: 700; color: #fff; }
+  .table .pts { color: var(--blue-bright); font-weight: 700; text-align: right; }
+  .table tr.top { background: linear-gradient(90deg, rgba(59,130,246,.10), transparent); }
+
+  /* ---------- Predicted champion ---------- */
+  .champion {
+    margin-top: 50px; padding: 40px; text-align: center; position: relative; overflow: hidden;
+    border: 1px solid rgba(139,92,246,.35);
+    background:
+      radial-gradient(ellipse 60% 90% at 50% 0%, rgba(139,92,246,.20), transparent 70%),
+      var(--glass);
+  }
+  .champion .crown { font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: var(--purple); font-weight: 600; }
+  .champ-logo {
+    width: 96px; height: 96px; border-radius: 26px; margin: 22px auto 18px; display: grid; place-items: center;
+    font-family: 'Space Grotesk'; font-weight: 700; font-size: 34px; color: #fff;
+    background: linear-gradient(135deg, #f59e0b, #b45309);
+    box-shadow: 0 0 50px rgba(245,158,11,.5);
+  }
+  .champion h3 { font-size: 30px; font-weight: 700; }
+  .champion .winprob {
+    display: inline-block; margin-top: 16px; font-family: 'Space Grotesk'; font-weight: 700; font-size: 15px;
+    padding: 9px 20px; border-radius: 999px; color: #fff;
+    background: linear-gradient(135deg, var(--blue), var(--purple)); box-shadow: 0 10px 28px rgba(99,102,241,.4);
+  }
+
+  /* ---------- Footer ---------- */
+  footer { border-top: 1px solid var(--glass-border); padding: 36px 0; margin-top: 80px; }
+  .foot-inner { display: flex; justify-content: space-between; align-items: center; color: var(--muted); font-size: 13px; flex-wrap: wrap; gap: 16px; }
+
+  /* fade-in */
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s ease; }
+  .reveal.in { opacity: 1; transform: none; }
+
+  @media (max-width: 900px) {
+    .stats, .features { grid-template-columns: repeat(2, 1fr); }
+    .interactive { grid-template-columns: 1fr; }
+    .nav-links { display: none; }
+  }
+  @media (max-width: 540px) {
+    .stats, .features { grid-template-columns: 1fr; }
+    .bracket { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Ambient background -->
+<div class="bg-layer">
+  <div class="glow blue"></div>
+  <div class="glow purple"></div>
+  <div class="glow cyan"></div>
+</div>
+<div class="grid-overlay"></div>
+<svg class="stadium" viewBox="0 0 1100 360" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <defs>
+    <radialGradient id="pitch" cx="50%" cy="20%" r="80%">
+      <stop offset="0%" stop-color="#1e3a8a" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#0b1024" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="line" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.0"/>
+      <stop offset="50%" stop-color="#8b5cf6" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="#38bdf8" stop-opacity="0.0"/>
+    </linearGradient>
+  </defs>
+  <ellipse cx="550" cy="40" rx="520" ry="150" fill="url(#pitch)"/>
+  <!-- stadium tiers -->
+  <ellipse cx="550" cy="60" rx="430" ry="120" stroke="#3b4a7a" stroke-opacity="0.3" stroke-width="1.5"/>
+  <ellipse cx="550" cy="60" rx="330" ry="92" stroke="#3b4a7a" stroke-opacity="0.35" stroke-width="1.5"/>
+  <ellipse cx="550" cy="60" rx="230" ry="64" stroke="#38bdf8" stroke-opacity="0.3" stroke-width="1.5"/>
+  <!-- pitch center -->
+  <ellipse cx="550" cy="60" rx="120" ry="34" stroke="#8b5cf6" stroke-opacity="0.5" stroke-width="1.5"/>
+  <line x1="430" y1="60" x2="670" y2="60" stroke="#8b5cf6" stroke-opacity="0.4" stroke-width="1.5"/>
+  <!-- abstract bracket lines -->
+  <path d="M40 230 H170 V180 H300" stroke="url(#line)" stroke-width="1.5" fill="none"/>
+  <path d="M40 300 H170 V180" stroke="url(#line)" stroke-width="1.5" fill="none"/>
+  <path d="M1060 230 H930 V180 H800" stroke="url(#line)" stroke-width="1.5" fill="none"/>
+  <path d="M1060 300 H930 V180" stroke="url(#line)" stroke-width="1.5" fill="none"/>
+</svg>
+
+<!-- Nav -->
+<nav>
+  <div class="wrap nav-inner">
+    <div class="brand">
+      <span class="logo">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2l2.4 4.9 5.4.8-3.9 3.8.9 5.4L12 15.4 7.2 17l.9-5.4L4.2 7.7l5.4-.8L12 2z" fill="#fff"/></svg>
+      </span>
+      UCL Manager
+    </div>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#predict">Predict</a>
+      <a href="#bracket">Bracket</a>
+      <a href="#standings">Standings</a>
+    </div>
+    <a href="#" class="nav-cta">Launch App</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<header class="hero wrap">
+  <span class="pill"><span class="dot"></span> Live · Quarter Finals in progress</span>
+  <h1>Champions League<br><span class="accent">Manager</span></h1>
+  <p class="sub">Simulate, predict, and control the tournament — from the group stage to the final whistle.</p>
+  <div class="hero-btns">
+    <a href="#predict" class="btn btn-primary">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M5 3l14 9-14 9V3z" fill="#fff"/></svg>
+      Start Simulation
+    </a>
+    <a href="#standings" class="btn btn-ghost">View Standings →</a>
+  </div>
+</header>
+
+<!-- Live stat cards -->
+<section class="wrap reveal">
+  <div class="stats">
+    <div class="glass stat">
+      <div class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2v20M2 12h20" stroke="currentColor" stroke-width="2"/></svg></div>
+      <div class="label">Current Stage</div>
+      <div class="value">Quarter Finals</div>
+      <span class="badge">8 teams left</span>
+    </div>
+    <div class="glass stat">
+      <div class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2l2.4 4.9 5.4.8-3.9 3.8.9 5.4L12 15.4 7.2 17l.9-5.4L4.2 7.7l5.4-.8L12 2z" fill="currentColor"/></svg></div>
+      <div class="label">Top Team</div>
+      <div class="value">Real Madrid</div>
+      <span class="badge">18 pts · GD +14</span>
+    </div>
+    <div class="glass stat">
+      <div class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="2"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6" stroke="currentColor" stroke-width="2"/></svg></div>
+      <div class="label">Top Scorer</div>
+      <div class="value">Mbappé <small>· 9</small></div>
+      <span class="badge">3 assists</span>
+    </div>
+    <div class="glass stat">
+      <div class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" stroke-width="2"/><path d="M3 9h18" stroke="currentColor" stroke-width="2"/></svg></div>
+      <div class="label">Matches Played</div>
+      <div class="value">96 <small>/ 125</small></div>
+      <span class="badge">77% complete</span>
+    </div>
+  </div>
+</section>
+
+<!-- Features -->
+<section class="section wrap reveal" id="features">
+  <div class="eyebrow">Everything you need</div>
+  <h2>Run the tournament your way</h2>
+  <p class="lead">A modern control room for the world's biggest club competition.</p>
+  <div class="features">
+    <div class="glass feature">
+      <div class="fi"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z" fill="currentColor"/></svg></div>
+      <h3>Smart Simulation</h3>
+      <p>Run thousands of match outcomes powered by team strength models.</p>
+    </div>
+    <div class="glass feature">
+      <div class="fi"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M3 17l5-5 4 4 8-8" stroke="currentColor" stroke-width="2" fill="none"/><path d="M16 8h5v5" stroke="currentColor" stroke-width="2" fill="none"/></svg></div>
+      <h3>Predictions</h3>
+      <p>Probabilistic forecasts for every fixture, stage, and the final.</p>
+    </div>
+    <div class="glass feature">
+      <div class="fi"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 20V10M10 20V4M16 20v-7M22 20V8" stroke="currentColor" stroke-width="2"/></svg></div>
+      <h3>Team Stats</h3>
+      <p>Deep dive into form, goals, defence and head-to-head records.</p>
+    </div>
+    <div class="glass feature">
+      <div class="fi"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/><path d="M12 7v5l3 2" stroke="currentColor" stroke-width="2"/></svg></div>
+      <h3>What-if Scenarios</h3>
+      <p>Tweak any result and instantly see the bracket reshape.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Interactive: prediction + bracket -->
+<section class="section wrap reveal" id="predict">
+  <div class="eyebrow">Interactive</div>
+  <h2>Predict the next clash</h2>
+  <div class="interactive">
+    <!-- Prediction card -->
+    <div class="glass panel">
+      <div class="panel-title">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M3 17l5-5 4 4 8-8" stroke="#38bdf8" stroke-width="2" fill="none"/></svg>
+        Match Prediction
+        <span class="tag">Quarter Final · 1st leg</span>
+      </div>
+      <div class="match">
+        <div class="team-side">
+          <div class="team-logo logo-a">M</div>
+          <div class="name">Man City</div>
+          <div class="seed">Seed #1</div>
+        </div>
+        <div class="vs">VS</div>
+        <div class="team-side">
+          <div class="team-logo logo-b">B</div>
+          <div class="name">Bayern</div>
+          <div class="seed">Seed #4</div>
+        </div>
+      </div>
+      <div class="score-row">
+        <input class="score-input" value="2" inputmode="numeric" />
+        <span class="vs">—</span>
+        <input class="score-input" value="1" inputmode="numeric" />
+      </div>
+      <button class="btn btn-primary btn-sim" onclick="simulate()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 3l14 9-14 9V3z" fill="#fff"/></svg>
+        Simulate Match
+      </button>
+      <div class="prob-bar"><div class="prob-fill" id="probFill"></div></div>
+      <div class="prob-legend"><span id="probA">Man City 62%</span><span id="probB">Bayern 38%</span></div>
+    </div>
+
+    <!-- Bracket -->
+    <div class="glass panel" id="bracket">
+      <div class="panel-title">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 6h6v12H4M14 9h6v6h-6M10 12h4" stroke="#8b5cf6" stroke-width="2" fill="none"/></svg>
+        Knockout Bracket
+        <span class="tag">Live preview</span>
+      </div>
+      <div class="bracket">
+        <div class="bcol">
+          <div class="bmatch"><div class="bteam win">Man City <span class="s">2</span></div><div class="bteam">Bayern <span>1</span></div></div>
+          <div class="bmatch"><div class="bteam win">Real Madrid <span class="s">3</span></div><div class="bteam">Arsenal <span>1</span></div></div>
+          <div class="bmatch"><div class="bteam">PSG <span>0</span></div><div class="bteam win">Inter <span class="s">2</span></div></div>
+          <div class="bmatch"><div class="bteam win">Liverpool <span class="s">1</span></div><div class="bteam">Barça <span>0</span></div></div>
+        </div>
+        <div class="bcol">
+          <div class="bmatch"><div class="bteam win">Man City <span class="s">2</span></div><div class="bteam">Real <span>2</span></div></div>
+          <div class="bmatch"><div class="bteam">Inter <span>1</span></div><div class="bteam win">Liverpool <span class="s">2</span></div></div>
+        </div>
+        <div class="bcol">
+          <div class="bmatch final"><div class="bteam win">Man City <span class="s">?</span></div><div class="bteam">Liverpool <span>?</span></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- League table -->
+<section class="section wrap reveal" id="standings">
+  <div class="eyebrow">Standings</div>
+  <h2>League phase table</h2>
+  <div class="glass panel" style="margin-top:40px; max-width:760px; margin-left:auto; margin-right:auto;">
+    <table class="table">
+      <thead><tr><th>#</th><th>Club</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GD</th><th style="text-align:right">Pts</th></tr></thead>
+      <tbody>
+        <tr class="top"><td>1</td><td><div class="tname"><span class="chip" style="background:#1e3a8a">RM</span>Real Madrid</div></td><td>8</td><td>6</td><td>0</td><td>2</td><td>+14</td><td class="pts">18</td></tr>
+        <tr class="top"><td>2</td><td><div class="tname"><span class="chip" style="background:#0c4a6e">MC</span>Man City</div></td><td>8</td><td>5</td><td>2</td><td>1</td><td>+11</td><td class="pts">17</td></tr>
+        <tr><td>3</td><td><div class="tname"><span class="chip" style="background:#7f1d1d">LV</span>Liverpool</div></td><td>8</td><td>5</td><td>1</td><td>2</td><td>+9</td><td class="pts">16</td></tr>
+        <tr><td>4</td><td><div class="tname"><span class="chip" style="background:#3730a3">IN</span>Inter</div></td><td>8</td><td>4</td><td>2</td><td>2</td><td>+6</td><td class="pts">14</td></tr>
+        <tr><td>5</td><td><div class="tname"><span class="chip" style="background:#831843">BY</span>Bayern</div></td><td>8</td><td>4</td><td>1</td><td>3</td><td>+5</td><td class="pts">13</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- Predicted champion -->
+<section class="wrap reveal">
+  <div class="glass champion">
+    <div class="crown">★ Predicted Champion ★</div>
+    <div class="champ-logo">MC</div>
+    <h3>Manchester City</h3>
+    <div class="winprob">Win probability · 28.4%</div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="wrap foot-inner">
+    <div class="brand"><span class="logo"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2l2.4 4.9 5.4.8-3.9 3.8.9 5.4L12 15.4 7.2 17l.9-5.4L4.2 7.7l5.4-.8L12 2z" fill="#fff"/></svg></span> UCL Manager</div>
+    <span>© 2026 Champions League Manager — a simulation showcase.</span>
+  </div>
+</footer>
+
+<script>
+  // Reveal on scroll
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // Simple "simulate" interaction
+  function simulate() {
+    const a = Math.floor(Math.random() * 4);
+    const b = Math.floor(Math.random() * 4);
+    const inputs = document.querySelectorAll('.score-input');
+    inputs[0].value = a; inputs[1].value = b;
+    const pa = 45 + Math.floor(Math.random() * 30);
+    document.getElementById('probFill').style.width = pa + '%';
+    document.getElementById('probA').textContent = 'Man City ' + pa + '%';
+    document.getElementById('probB').textContent = 'Bayern ' + (100 - pa) + '%';
+  }
+</script>
+</body>
+</html>

@@ -17,9 +17,22 @@ import java.util.Map;
 public class FixtureService {
 
     private final FixtureRepository fixtureRepository;
+    private final AuditService auditService;
 
-    public FixtureService(FixtureRepository fixtureRepository) {
+    public FixtureService(FixtureRepository fixtureRepository, AuditService auditService) {
         this.fixtureRepository = fixtureRepository;
+        this.auditService = auditService;
+    }
+
+    /** "MD3 · Real Madrid vs Barcelona" — a human label for the audit trail. */
+    private static String label(Fixture f) {
+        return "MD" + f.getMatchday() + " · " + f.getHomeTeam().getName() + " vs " + f.getAwayTeam().getName();
+    }
+
+    private static String scoreOf(Fixture f) {
+        return f.isPlayed() && f.getHomeScore() != null && f.getAwayScore() != null
+                ? f.getHomeScore() + "-" + f.getAwayScore()
+                : "—"; // em dash = "not played"
     }
 
     public List<FixtureResponse> getAllFixtures() {
@@ -42,10 +55,13 @@ public class FixtureService {
     public FixtureResponse updateResult(Long id, ResultRequest request) {
         Fixture fixture = fixtureRepository.findById(id)
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Fixture not found: " + id));
+        String before = scoreOf(fixture);
         fixture.setHomeScore(request.homeScore());
         fixture.setAwayScore(request.awayScore());
         fixture.setPlayed(true);
-        return FixtureResponse.from(fixtureRepository.save(fixture));
+        FixtureResponse saved = FixtureResponse.from(fixtureRepository.save(fixture));
+        auditService.log("RESULT_SET", label(fixture), before + " → " + scoreOf(fixture));
+        return saved;
     }
 
     /** Clear a result back to "not played". */
@@ -53,10 +69,13 @@ public class FixtureService {
     public FixtureResponse clearResult(Long id) {
         Fixture fixture = fixtureRepository.findById(id)
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Fixture not found: " + id));
+        String before = scoreOf(fixture);
         fixture.setHomeScore(null);
         fixture.setAwayScore(null);
         fixture.setPlayed(false);
-        return FixtureResponse.from(fixtureRepository.save(fixture));
+        FixtureResponse saved = FixtureResponse.from(fixtureRepository.save(fixture));
+        auditService.log("RESULT_CLEARED", label(fixture), before + " → —");
+        return saved;
     }
 
     @Transactional

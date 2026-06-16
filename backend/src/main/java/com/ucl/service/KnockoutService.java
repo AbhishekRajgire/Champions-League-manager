@@ -36,13 +36,16 @@ public class KnockoutService {
     private final KnockoutMatchRepository knockoutMatchRepository;
     private final TeamRepository teamRepository;
     private final StandingsService standingsService;
+    private final AuditService auditService;
 
     public KnockoutService(KnockoutMatchRepository knockoutMatchRepository,
                            TeamRepository teamRepository,
-                           StandingsService standingsService) {
+                           StandingsService standingsService,
+                           AuditService auditService) {
         this.knockoutMatchRepository = knockoutMatchRepository;
         this.teamRepository = teamRepository;
         this.standingsService = standingsService;
+        this.auditService = auditService;
     }
 
     /**
@@ -112,6 +115,9 @@ public class KnockoutService {
                     "Knockout matches cannot end level — enter a result with a winner.");
         }
 
+        String before = match.isPlayed() && match.getHomeScore() != null
+                ? match.getHomeScore() + "-" + match.getAwayScore() : "—";
+
         match.setHomeScore(request.homeScore());
         match.setAwayScore(request.awayScore());
         match.setPlayed(true);
@@ -119,6 +125,12 @@ public class KnockoutService {
         knockoutMatchRepository.save(match);
 
         advanceWinner(match);
+
+        String target = match.getRound().getLabel() + " · "
+                + match.getHomeTeam().getName() + " vs " + match.getAwayTeam().getName();
+        auditService.log("KNOCKOUT_RESULT", target,
+                before + " → " + request.homeScore() + "-" + request.awayScore()
+                        + " (" + match.getWinner().getName() + " advance)");
         return KnockoutMatchResponse.from(match);
     }
 

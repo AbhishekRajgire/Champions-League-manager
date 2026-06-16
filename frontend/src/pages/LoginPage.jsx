@@ -1,10 +1,12 @@
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext.jsx';
 
 export default function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from;
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -16,7 +18,7 @@ export default function LoginPage() {
     setLoading(true);
     try {
       const data = await login(username, password);
-      navigate(data.role === 'ADMIN' ? '/admin/fixtures' : '/fixtures');
+      navigate(from || (data.role === 'ADMIN' ? '/admin/fixtures' : '/fixtures'));
     } catch (err) {
       setError(err.message);
     } finally {
@@ -39,7 +41,7 @@ export default function LoginPage() {
         </button>
       </form>
       <p className="muted small">
-        No account? <Link to="/register">Register as a fan</Link>
+        No account? <Link to="/register" state={from ? { from } : undefined}>Register as a fan</Link>
       </p>
       <div className="hint">
         <strong>Demo accounts</strong>

@@ -31,7 +31,7 @@ public class KnockoutController {
     }
 
     @PutMapping("/{id}/result")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','MODERATOR')")
     public KnockoutMatchResponse updateResult(@PathVariable Long id, @Valid @RequestBody ResultRequest request) {
         return knockoutService.submitResult(id, request);
     }

@@ -41,6 +41,9 @@ export function AuthProvider({ children }) {
     auth,
     isAuthenticated: !!auth,
     isAdmin: auth?.role === 'ADMIN',
+    isModerator: auth?.role === 'MODERATOR',
+    // Admins and moderators may enter/clear results.
+    canEditResults: auth?.role === 'ADMIN' || auth?.role === 'MODERATOR',
     login,
     register,
     logout,

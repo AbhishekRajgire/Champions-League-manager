@@ -42,13 +42,13 @@ public class FixtureController {
     }
 
     @PutMapping("/{id}/result")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','MODERATOR')")
     public FixtureResponse updateResult(@PathVariable Long id, @Valid @RequestBody ResultRequest request) {
         return fixtureService.updateResult(id, request);
     }
 
     @PatchMapping("/{id}/clear")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','MODERATOR')")
     public FixtureResponse clearResult(@PathVariable Long id) {
         return fixtureService.clearResult(id);
     }

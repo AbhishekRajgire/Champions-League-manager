@@ -26,6 +26,10 @@ public class DataSeeder implements CommandLineRunner {
     private String userUsername;
     @Value("${app.seed.user-password}")
     private String userPassword;
+    @Value("${app.seed.moderator-username}")
+    private String moderatorUsername;
+    @Value("${app.seed.moderator-password}")
+    private String moderatorPassword;
 
     public DataSeeder(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
@@ -41,6 +45,10 @@ public class DataSeeder implements CommandLineRunner {
         if (!userRepository.existsByUsername(userUsername)) {
             userRepository.save(new User(userUsername, passwordEncoder.encode(userPassword), Role.USER));
             log.info("Seeded USER account '{}'", userUsername);
+        }
+        if (!userRepository.existsByUsername(moderatorUsername)) {
+            userRepository.save(new User(moderatorUsername, passwordEncoder.encode(moderatorPassword), Role.MODERATOR));
+            log.info("Seeded MODERATOR account '{}'", moderatorUsername);
         }
     }
 }
